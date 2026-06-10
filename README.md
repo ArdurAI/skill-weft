@@ -46,3 +46,19 @@ Supported Phase 1 adapters:
 ## Current status
 
 Phase 1 working prototype: local registry + keyword suggestions + budget-aware context packs + `doctor` + dry-run launch adapters for Claude Code, Codex CLI, Gemini CLI, Hermes, and Cursor.
+
+## Real-world tests
+
+The normal test suite includes skipped-by-default Olla API real-world tests. They use the real local skill registry and an Olla/OpenAI-compatible chat-completions API as an external judge for routing quality.
+
+```bash
+# Unit/offline suite; live Olla tests are skipped unless enabled.
+PYTHONPATH=src python3 -m unittest discover -s tests
+
+# Live Olla test run, only after setting a key intentionally.
+export OLLA_API_KEY='***'
+export SKILLWEFT_RUN_OLLA_REAL_WORLD=1
+PYTHONPATH=src python3 -m unittest tests.test_olla_api_real_world -v
+```
+
+See `docs/testing/olla-real-world-tests.md` for all environment variables.
