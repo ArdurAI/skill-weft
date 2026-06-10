@@ -1,18 +1,10 @@
 from __future__ import annotations
 
-from dataclasses import dataclass
 from pathlib import Path
 import re
 from typing import Iterable
 
-
-@dataclass(frozen=True)
-class Skill:
-    name: str
-    description: str
-    tags: tuple[str, ...]
-    content: str
-    path: Path
+from .models import Skill
 
 
 def _parse_frontmatter(text: str) -> tuple[dict[str, str], str]:
@@ -47,7 +39,17 @@ def load_skill(path: str | Path) -> Skill:
     name = meta.get("name") or (heading.group(1) if heading else p.stem)
     description = meta.get("description") or ""
     tags = _parse_tags(meta.get("tags", ""))
-    return Skill(name=name, description=description, tags=tags, content=body.strip(), path=p)
+    return Skill(
+        name=name,
+        description=description,
+        tags=tags,
+        content=body.strip(),
+        path=p,
+        version=meta.get("version"),
+        source=meta.get("source"),
+        trust_level=meta.get("trust_level", meta.get("trust-level", "unknown")),
+        skill_id=meta.get("id"),
+    )
 
 
 def iter_skills(registry: str | Path) -> Iterable[Skill]:

@@ -13,3 +13,10 @@ class PackerTest(unittest.TestCase):
         self.assertIn("SkillWeft Context Pack", text)
         self.assertIn("Why selected: reason", text)
         self.assertIn("body", text)
+
+    def test_pack_text_respects_budget(self):
+        skill = Skill("large", "desc", ("tag",), "word " * 1000, Path("large.md"))
+        text = pack_text("task", [Suggestion(skill, 1, ("reason",))], budget=120)
+        self.assertIn("SkillWeft Context Pack", text)
+        self.assertIn("[truncated by SkillWeft", text)
+        self.assertNotIn("word " * 1000, text)

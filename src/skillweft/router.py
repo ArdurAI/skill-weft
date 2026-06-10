@@ -1,20 +1,12 @@
 from __future__ import annotations
 
-from dataclasses import dataclass
 import re
-from .registry import Skill
+from .models import Skill, Suggestion
 
 STOPWORDS = {
     "a", "an", "and", "are", "as", "for", "in", "is", "it", "of", "on", "or", "the", "to", "with",
     "i", "want", "need", "do", "this", "that", "tool", "ai", "agent"
 }
-
-
-@dataclass(frozen=True)
-class Suggestion:
-    skill: Skill
-    score: int
-    reasons: tuple[str, ...]
 
 
 def tokenize(text: str) -> set[str]:
@@ -50,5 +42,6 @@ def suggest(task: str, skills: list[Skill], limit: int = 5) -> list[Suggestion]:
             score += len(content_hits)
             reasons.append("content matched: " + ", ".join(sorted(list(content_hits))[:8]))
         if score > 0:
-            out.append(Suggestion(skill=skill, score=score, reasons=tuple(reasons)))
+            matched_terms = tuple(sorted(name_hits | desc_hits | tag_hits | content_hits))
+            out.append(Suggestion(skill=skill, score=score, reasons=tuple(reasons), matched_terms=matched_terms))
     return sorted(out, key=lambda s: (-s.score, s.skill.name))[:limit]

@@ -21,9 +21,28 @@ Build a local-first CLI/service that:
 ```bash
 python -m skillweft.cli add examples/skills/python-debugging.md --registry .skillweft/skills
 python -m skillweft.cli suggest "debug a failing pytest test" --registry .skillweft/skills
-python -m skillweft.cli pack "debug a failing pytest test" --registry .skillweft/skills --max-skills 2
+python -m skillweft.cli pack "debug a failing pytest test" --registry .skillweft/skills --max-skills 2 --budget 2000
 ```
+
+## Phase 1 preflight router
+
+SkillWeft can now detect installed AI-agent CLIs and build dry-run launch plans that include only the selected skill context:
+
+```bash
+PYTHONPATH=src python3 -m skillweft.cli doctor
+PYTHONPATH=src python3 -m skillweft.cli run claude "debug pytest" --registry examples/skills --dry-run
+PYTHONPATH=src python3 -m skillweft.cli run codex "debug pytest" --registry examples/skills --dry-run
+PYTHONPATH=src python3 -m skillweft.cli run gemini "debug pytest" --registry examples/skills --dry-run
+```
+
+Supported Phase 1 adapters:
+
+- Claude Code
+- Codex CLI
+- Gemini CLI
+- Hermes Agent
+- Cursor CLI / `agent`
 
 ## Current status
 
-Initial working prototype: local registry + keyword-based suggestions + JSON/text context packs.
+Phase 1 working prototype: local registry + keyword suggestions + budget-aware context packs + `doctor` + dry-run launch adapters for Claude Code, Codex CLI, Gemini CLI, Hermes, and Cursor.
