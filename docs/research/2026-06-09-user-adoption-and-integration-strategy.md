@@ -1,8 +1,8 @@
-# SkillHub user adoption and integration strategy research
+# SkillWeft user adoption and integration strategy research
 
 Date: 2026-06-09
 
-Goal: identify the best practical way for both non-technical and technical users to incorporate SkillHub into the AI tools they already use.
+Goal: identify the best practical way for both non-technical and technical users to incorporate SkillWeft into the AI tools they already use.
 
 ## Executive recommendation
 
@@ -10,8 +10,8 @@ The best incorporation strategy is not a single integration path. It is a layere
 
 1. **Agent Skills package format as the canonical skill artifact**
    - Store skills as folders containing `SKILL.md` plus optional `references/`, `scripts/`, `templates/`, and `assets/`.
-   - This aligns SkillHub with the emerging Agent Skills standard instead of inventing a private format.
-   - SkillHub should manage, audit, version, route, and sync these packages.
+   - This aligns SkillWeft with the emerging Agent Skills standard instead of inventing a private format.
+   - SkillWeft should manage, audit, version, route, and sync these packages.
 
 2. **Runtime MCP server as the universal live bridge**
    - Expose only a small router API over MCP:
@@ -23,7 +23,7 @@ The best incorporation strategy is not a single integration path. It is a layere
    - Do **not** expose every skill as a separate MCP tool. That would bloat the tool schema and recreate the context-bloat problem.
 
 3. **Preflight launcher/wrapper as the reliability layer**
-   - Before an agent starts, SkillHub selects relevant skills and injects a compact context pack.
+   - Before an agent starts, SkillWeft selects relevant skills and injects a compact context pack.
    - This works even if the target agent never decides to call MCP during the session.
 
 4. **One-click/non-technical UX on top**
@@ -31,11 +31,11 @@ The best incorporation strategy is not a single integration path. It is a layere
    - Under the hood, it runs the same CLI/config/symlink/MCP setup that technical users can run manually.
 
 5. **Team/enterprise mode later**
-   - Hosted SkillHub registry + remote HTTP MCP + OAuth/SSO + org skill policies + audit logs.
+   - Hosted SkillWeft registry + remote HTTP MCP + OAuth/SSO + org skill policies + audit logs.
 
 The product positioning should be:
 
-> SkillHub is the shared skill registry, router, and maintenance layer for AI agents. It stores skills once, makes them available everywhere, and injects only the skills needed for the current task.
+> SkillWeft is the shared skill registry, router, and maintenance layer for AI agents. It stores skills once, makes them available everywhere, and injects only the skills needed for the current task.
 
 ## Why this is the best approach
 
@@ -47,12 +47,12 @@ Evidence:
 - Cursor loads skills from `.agents/skills/`, `.cursor/skills/`, `~/.agents/skills/`, and `~/.cursor/skills/`, and also loads compatibility locations `.claude/skills/`, `.codex/skills/`, `~/.claude/skills/`, and `~/.codex/skills/`.
 - The MCP docs describe agent skills as portable instruction sets and say a skill ships a `SKILL.md` file plus a `references/` folder that agents read on demand.
 
-Implication for SkillHub:
+Implication for SkillWeft:
 
-SkillHub should not treat skills as loose Markdown prompt snippets only. It should treat each skill as a package. The canonical on-disk layout should be compatible with Agent Skills:
+SkillWeft should not treat skills as loose Markdown prompt snippets only. It should treat each skill as a package. The canonical on-disk layout should be compatible with Agent Skills:
 
 ```text
-skillhub-registry/
+skillweft-registry/
   skills/
     python-debugging/
       SKILL.md
@@ -76,26 +76,26 @@ Evidence:
 - Gemini CLI discovers MCP tools from `mcpServers` config.
 - Hermes has native MCP client/server support.
 
-Implication for SkillHub:
+Implication for SkillWeft:
 
-MCP should be the main runtime bridge. However, MCP does not guarantee the model will call the SkillHub tool at the right time. Therefore, MCP must be paired with preflight routing.
+MCP should be the main runtime bridge. However, MCP does not guarantee the model will call the SkillWeft tool at the right time. Therefore, MCP must be paired with preflight routing.
 
-Recommended SkillHub MCP tool set:
+Recommended SkillWeft MCP tool set:
 
 ```text
-skillhub_suggest_skills(task, max_skills=5, budget=None)
-skillhub_get_skill(name_or_id, mode="summary|full|references")
-skillhub_pack_context(task, budget=6000, target="generic")
-skillhub_report_skill_outcome(skill_id, task, outcome, notes="")
-skillhub_audit_skill(name_or_id=None)
+skillweft_suggest_skills(task, max_skills=5, budget=None)
+skillweft_get_skill(name_or_id, mode="summary|full|references")
+skillweft_pack_context(task, budget=6000, target="generic")
+skillweft_report_skill_outcome(skill_id, task, outcome, notes="")
+skillweft_audit_skill(name_or_id=None)
 ```
 
 Avoid:
 
 ```text
-mcp_skillhub_python_debugging
-mcp_skillhub_kubernetes_review
-mcp_skillhub_security_review
+mcp_skillweft_python_debugging
+mcp_skillweft_kubernetes_review
+mcp_skillweft_security_review
 ...
 ```
 
@@ -111,16 +111,16 @@ Evidence:
 - Cursor CLI supports print mode for scripts and automation.
 - Hermes supports `hermes chat -q` and native skill/MCP usage.
 
-Implication for SkillHub:
+Implication for SkillWeft:
 
-Every tool that has a CLI can support SkillHub through a wrapper:
+Every tool that has a CLI can support SkillWeft through a wrapper:
 
 ```bash
-skillhub run claude "fix the failing auth tests"
-skillhub run codex "add caching to this service"
-skillhub run gemini "review this architecture doc"
-skillhub run cursor "refactor the React components"
-skillhub run hermes "triage these logs"
+skillweft run claude "fix the failing auth tests"
+skillweft run codex "add caching to this service"
+skillweft run gemini "review this architecture doc"
+skillweft run cursor "refactor the React components"
+skillweft run hermes "triage these logs"
 ```
 
 The wrapper flow:
@@ -145,12 +145,12 @@ Examples:
 
 Best path:
 
-**SkillHub Desktop / Local Web App with one-click connectors.**
+**SkillWeft Desktop / Local Web App with one-click connectors.**
 
 UX:
 
 ```text
-Welcome to SkillHub
+Welcome to SkillWeft
 
 [Import skills] [Connect AI tools] [Try a task]
 
@@ -167,10 +167,10 @@ Connectors:
 
 Under the hood:
 
-- Starts local SkillHub service.
+- Starts local SkillWeft service.
 - Registers MCP servers where possible.
 - Links or syncs Agent Skills folders.
-- Adds wrappers/shortcuts such as “Ask with Claude + SkillHub”.
+- Adds wrappers/shortcuts such as “Ask with Claude + SkillWeft”.
 - Provides a “Copy context pack” fallback for browser-only tools.
 
 Non-technical UX principles:
@@ -186,7 +186,7 @@ Non-technical UX principles:
 Recommended first implementation:
 
 ```text
-SkillHub Desktop v0:
+SkillWeft Desktop v0:
 - local app at http://localhost:<port>
 - setup wizard
 - tool detection
@@ -200,7 +200,7 @@ Why this is best:
 
 - It hides MCP/config complexity.
 - It supports both local-first privacy and one-click use.
-- It gives non-technical users a mental model: “SkillHub helps my AI pick the right playbook.”
+- It gives non-technical users a mental model: “SkillWeft helps my AI pick the right playbook.”
 
 ### Segment 2: Technical individual users
 
@@ -216,34 +216,34 @@ Best path:
 Target UX:
 
 ```bash
-pipx install skillhub
-skillhub init
-skillhub import ~/.hermes/skills
-skillhub integrate --all
-skillhub doctor
-skillhub run codex "fix failing pytest tests"
+pipx install skillweft
+skillweft init
+skillweft import ~/.hermes/skills
+skillweft integrate --all
+skillweft doctor
+skillweft run codex "fix failing pytest tests"
 ```
 
 Core commands:
 
 ```bash
-skillhub doctor
-skillhub integrate claude
-skillhub integrate codex
-skillhub integrate gemini
-skillhub integrate cursor
-skillhub integrate hermes
-skillhub suggest "task"
-skillhub pack "task" --target claude
-skillhub run claude "task"
-skillhub mcp serve --stdio
+skillweft doctor
+skillweft integrate claude
+skillweft integrate codex
+skillweft integrate gemini
+skillweft integrate cursor
+skillweft integrate hermes
+skillweft suggest "task"
+skillweft pack "task" --target claude
+skillweft run claude "task"
+skillweft mcp serve --stdio
 ```
 
 Why this is best:
 
 - Developers can verify exactly what changed.
 - CLI integrates well with shells, CI, git, dotfiles, and coding agents.
-- Wrappers make SkillHub useful before every target tool has perfect native integration.
+- Wrappers make SkillWeft useful before every target tool has perfect native integration.
 
 ### Segment 3: Development teams
 
@@ -253,13 +253,13 @@ Examples:
 
 Best path:
 
-**Project-level SkillHub profile + repo-pinned Agent Skills + optional remote MCP.**
+**Project-level SkillWeft profile + repo-pinned Agent Skills + optional remote MCP.**
 
 Target layout:
 
 ```text
 repo/
-  .skillhub/
+  .skillweft/
     manifest.yaml
     policy.yaml
     lock.json
@@ -276,11 +276,11 @@ repo/
 Team commands:
 
 ```bash
-skillhub init --team
-skillhub sync --project
-skillhub audit --ci
-skillhub lock
-skillhub doctor --project
+skillweft init --team
+skillweft sync --project
+skillweft audit --ci
+skillweft lock
+skillweft doctor --project
 ```
 
 Team rules:
@@ -294,7 +294,7 @@ Why this is best:
 
 - Teams need reproducibility.
 - Project-local skills travel with the repo.
-- SkillHub can prevent stale/unsafe skill instructions from silently spreading.
+- SkillWeft can prevent stale/unsafe skill instructions from silently spreading.
 
 ### Segment 4: Enterprise/org users
 
@@ -304,7 +304,7 @@ Examples:
 
 Best path:
 
-**Hosted/private SkillHub server + remote HTTP MCP + SSO + policy.**
+**Hosted/private SkillWeft server + remote HTTP MCP + SSO + policy.**
 
 Features:
 
@@ -331,14 +331,14 @@ Examples:
 
 Best path:
 
-**SkillHub SDK + HTTP API + MCP.**
+**SkillWeft SDK + HTTP API + MCP.**
 
 APIs:
 
 ```python
-from skillhub import SkillHub
+from skillweft import SkillWeft
 
-hub = SkillHub(registry="./skills")
+hub = SkillWeft(registry="./skills")
 pack = hub.pack_context("debug failing auth tests", target="my-agent", budget=4000)
 ```
 
@@ -360,14 +360,14 @@ Why this is best:
 
 ## Integration matrix
 
-| Tool/user surface | Non-technical path | Technical path | SkillHub adapter priority |
+| Tool/user surface | Non-technical path | Technical path | SkillWeft adapter priority |
 |---|---|---|---|
-| Cursor | One-click connector, `.cursor/skills`, `.agents/skills`, MCP config | `skillhub integrate cursor`, `.cursor/rules`, `mcp.json`, CLI wrapper | Very high |
-| Claude Code | One-click connector that runs/records `claude mcp add` and skill sync | `skillhub integrate claude`, `--append-system-prompt-file`, `--mcp-config`, `~/.claude/skills` | Very high |
-| Codex | Connector for `codex mcp add`, desktop/IDE config, wrapper | `skillhub integrate codex`, `codex exec` wrapper, `.codex/config.toml`, MCP | Very high |
-| Gemini CLI | Connector for `gemini mcp add` and `gemini skills link` | `skillhub integrate gemini`, `gemini -p`, `settings.json`, MCP | High |
-| Hermes | Native bridge + MCP + skills import/export | `skillhub integrate hermes`, `hermes mcp add`, native skills sync | High |
-| Browser-only Claude/ChatGPT/Grok/Kimi | Copy context pack button; later browser extension | `skillhub pack --target generic | pbcopy` | Medium |
+| Cursor | One-click connector, `.cursor/skills`, `.agents/skills`, MCP config | `skillweft integrate cursor`, `.cursor/rules`, `mcp.json`, CLI wrapper | Very high |
+| Claude Code | One-click connector that runs/records `claude mcp add` and skill sync | `skillweft integrate claude`, `--append-system-prompt-file`, `--mcp-config`, `~/.claude/skills` | Very high |
+| Codex | Connector for `codex mcp add`, desktop/IDE config, wrapper | `skillweft integrate codex`, `codex exec` wrapper, `.codex/config.toml`, MCP | Very high |
+| Gemini CLI | Connector for `gemini mcp add` and `gemini skills link` | `skillweft integrate gemini`, `gemini -p`, `settings.json`, MCP | High |
+| Hermes | Native bridge + MCP + skills import/export | `skillweft integrate hermes`, `hermes mcp add`, native skills sync | High |
+| Browser-only Claude/ChatGPT/Grok/Kimi | Copy context pack button; later browser extension | `skillweft pack --target generic | pbcopy` | Medium |
 | Custom agents | SDK/API/MCP credentials page | Python/TypeScript SDK, HTTP API, MCP client | High |
 | Enterprise tools | Admin connector UI | SSO, remote MCP, policy config | Later |
 
@@ -382,21 +382,21 @@ Use three paths:
    - For global personal skills, use `~/.agents/skills/` or `~/.cursor/skills/`.
 
 2. MCP:
-   - Generate `mcp.json` with SkillHub stdio or HTTP server.
+   - Generate `mcp.json` with SkillWeft stdio or HTTP server.
    - For non-technical users, provide one-click install/deeplink or marketplace path later.
 
 3. Rules:
-   - Generate minimal `.cursor/rules/skillhub.mdc` that tells Cursor when to use SkillHub MCP.
+   - Generate minimal `.cursor/rules/skillweft.mdc` that tells Cursor when to use SkillWeft MCP.
    - Do not dump all skills into rules.
 
 Recommended generated rule:
 
 ```mdc
 ---
-description: SkillHub routing policy for selecting relevant skills and workflows
+description: SkillWeft routing policy for selecting relevant skills and workflows
 alwaysApply: true
 ---
-Before starting a task that may benefit from procedural knowledge, use the SkillHub MCP server to suggest relevant skills. Load only the selected skills or context pack. Do not load the full skill registry into context.
+Before starting a task that may benefit from procedural knowledge, use the SkillWeft MCP server to suggest relevant skills. Load only the selected skills or context pack. Do not load the full skill registry into context.
 ```
 
 ### Claude Code
@@ -408,7 +408,7 @@ Use three paths:
    - Launch with `claude -p` and `--append-system-prompt-file` or prompt injection.
 
 2. MCP:
-   - `claude mcp add skillhub -- python3 -m skillhub.mcp_server stdio`
+   - `claude mcp add skillweft -- python3 -m skillweft.mcp_server stdio`
    - Or use `--mcp-config` for per-run temporary config.
 
 3. Skills:
@@ -419,21 +419,21 @@ Use three paths:
 Use three paths:
 
 1. MCP:
-   - `codex mcp add skillhub -- python3 -m skillhub.mcp_server stdio`
-   - Or Streamable HTTP for hosted SkillHub.
+   - `codex mcp add skillweft -- python3 -m skillweft.mcp_server stdio`
+   - Or Streamable HTTP for hosted SkillWeft.
 
 2. Preflight:
    - Pipe packed context into `codex exec -`.
 
 3. Config:
-   - Generate user/project `.codex/config.toml` entries for `mcp_servers.skillhub`.
+   - Generate user/project `.codex/config.toml` entries for `mcp_servers.skillweft`.
 
 Important Codex-specific recommendation:
 
-Codex reads the MCP `instructions` field during initialization and uses it as server-wide guidance. SkillHub should keep the first 512 characters of its MCP instructions self-contained and clear:
+Codex reads the MCP `instructions` field during initialization and uses it as server-wide guidance. SkillWeft should keep the first 512 characters of its MCP instructions self-contained and clear:
 
 ```text
-SkillHub suggests and packs procedural skills for the current task. Call suggest_skills before complex work, then get_skill or pack_context for only the selected skills. Do not request the full registry unless the user explicitly asks.
+SkillWeft suggests and packs procedural skills for the current task. Call suggest_skills before complex work, then get_skill or pack_context for only the selected skills. Do not request the full registry unless the user explicitly asks.
 ```
 
 ### Gemini CLI
@@ -441,10 +441,10 @@ SkillHub suggests and packs procedural skills for the current task. Call suggest
 Use three paths:
 
 1. Skills link:
-   - `gemini skills link <skillhub-skill-dir>` for live updates.
+   - `gemini skills link <skillweft-skill-dir>` for live updates.
 
 2. MCP:
-   - `gemini mcp add skillhub python3 -m skillhub.mcp_server stdio`
+   - `gemini mcp add skillweft python3 -m skillweft.mcp_server stdio`
    - Or write `mcpServers` into settings.
 
 3. Preflight:
@@ -456,7 +456,7 @@ Use three paths:
 
 1. Native import/export to Hermes skills.
 2. MCP:
-   - `hermes mcp add skillhub --command python3 --args ...`
+   - `hermes mcp add skillweft --command python3 --args ...`
 3. Preflight:
    - `hermes chat -q "<packed context>\n\nUser task: ..."`
 
@@ -464,37 +464,37 @@ Because Hermes already has a skill system and MCP, this should be one of the eas
 
 ## Best product packaging
 
-### Package 1: SkillHub Core CLI
+### Package 1: SkillWeft Core CLI
 
 Audience: technical users.
 
 Install:
 
 ```bash
-pipx install skillhub
+pipx install skillweft
 # or
-uv tool install skillhub
+uv tool install skillweft
 ```
 
 Primary commands:
 
 ```bash
-skillhub init
-skillhub import
-skillhub integrate
-skillhub run
-skillhub mcp serve
-skillhub audit
+skillweft init
+skillweft import
+skillweft integrate
+skillweft run
+skillweft mcp serve
+skillweft audit
 ```
 
-### Package 2: SkillHub Desktop / Local App
+### Package 2: SkillWeft Desktop / Local App
 
 Audience: non-technical and mixed users.
 
 Implementation options:
 
 - Tauri/Electron app wrapping the Python/Node local service.
-- Or local web app launched by `skillhub app`.
+- Or local web app launched by `skillweft app`.
 - Bundle a small runtime so users do not install Python manually.
 
 Key screens:
@@ -505,18 +505,18 @@ Key screens:
 4. Review suggested skill updates
 5. Privacy/security settings
 
-### Package 3: SkillHub MCP Server
+### Package 3: SkillWeft MCP Server
 
 Audience: every MCP-capable AI tool.
 
 Modes:
 
 ```bash
-skillhub mcp serve --stdio
-skillhub mcp serve --http --port 8123
+skillweft mcp serve --stdio
+skillweft mcp serve --http --port 8123
 ```
 
-### Package 4: SkillHub Cloud / Team Server
+### Package 4: SkillWeft Cloud / Team Server
 
 Audience: teams/enterprises.
 
@@ -540,7 +540,7 @@ Features:
 - Browser extension later.
 - “Paste this at the start of your chat” instructions.
 
-This is not the primary strategy because it is brittle, but it makes SkillHub usable with Grok, Kimi web UI, ChatGPT web UI, and other closed surfaces.
+This is not the primary strategy because it is brittle, but it makes SkillWeft usable with Grok, Kimi web UI, ChatGPT web UI, and other closed surfaces.
 
 ## Adoption funnel
 
@@ -549,12 +549,12 @@ This is not the primary strategy because it is brittle, but it makes SkillHub us
 Deliver:
 
 ```bash
-skillhub suggest "task"
-skillhub pack "task"
-skillhub run claude "task" --dry-run
-skillhub run codex "task" --dry-run
-skillhub run gemini "task" --dry-run
-skillhub mcp serve --stdio
+skillweft suggest "task"
+skillweft pack "task"
+skillweft run claude "task" --dry-run
+skillweft run codex "task" --dry-run
+skillweft run gemini "task" --dry-run
+skillweft mcp serve --stdio
 ```
 
 Success metric:
@@ -566,8 +566,8 @@ Success metric:
 Deliver:
 
 ```bash
-skillhub integrate --all
-skillhub doctor
+skillweft integrate --all
+skillweft doctor
 ```
 
 Success metric:
@@ -581,7 +581,7 @@ Deliver:
 
 - Tool detection UI.
 - One-click connect/disconnect.
-- “Ask with SkillHub” launcher.
+- “Ask with SkillWeft” launcher.
 - Context pack preview.
 - Skill update review queue.
 
@@ -593,7 +593,7 @@ Success metric:
 
 Deliver:
 
-- `.skillhub/manifest.yaml`
+- `.skillweft/manifest.yaml`
 - team skill packs
 - policy checks
 - CI audit
@@ -607,11 +607,11 @@ Success metric:
 
 The best immediate build order is:
 
-1. **Make SkillHub skills Agent Skills-compatible**
+1. **Make SkillWeft skills Agent Skills-compatible**
    - Convert examples to folder-based `SKILL.md` packages.
    - Add import/export from Hermes-style skills.
 
-2. **Add `skillhub integrate --dry-run`**
+2. **Add `skillweft integrate --dry-run`**
    - Show exactly what would be changed for Claude, Codex, Gemini, Cursor, Hermes.
 
 3. **Add real integrators for installed tools**
@@ -621,7 +621,7 @@ The best immediate build order is:
    - Cursor: `.agents/skills`/`.cursor/skills`, `.cursor/rules`, MCP config.
    - Hermes: skills + MCP.
 
-4. **Add `skillhub run <tool>` wrappers**
+4. **Add `skillweft run <tool>` wrappers**
    - Make the preflight router useful immediately.
 
 5. **Add MCP server**
@@ -666,29 +666,29 @@ Important verified facts:
 For technical users:
 
 ```bash
-skillhub integrate --all
-skillhub run <tool> "task"
-skillhub mcp serve --stdio
+skillweft integrate --all
+skillweft run <tool> "task"
+skillweft mcp serve --stdio
 ```
 
 For non-technical users:
 
 ```text
-Install SkillHub Desktop → Connect AI tools → Ask with SkillHub
+Install SkillWeft Desktop → Connect AI tools → Ask with SkillWeft
 ```
 
 For teams:
 
 ```bash
-skillhub init --team
-skillhub sync --project
-skillhub audit --ci
+skillweft init --team
+skillweft sync --project
+skillweft audit --ci
 ```
 
 For agent/tool builders:
 
 ```text
-Use SkillHub MCP, HTTP API, or SDK directly.
+Use SkillWeft MCP, HTTP API, or SDK directly.
 ```
 
 The first public version should emphasize:
@@ -699,4 +699,4 @@ The first public version should emphasize:
 4. Runtime MCP server.
 5. Local-first privacy.
 
-That combination gives SkillHub a realistic path to work for both non-technical and technical users without waiting for every AI vendor to implement a perfect native plugin system.
+That combination gives SkillWeft a realistic path to work for both non-technical and technical users without waiting for every AI vendor to implement a perfect native plugin system.

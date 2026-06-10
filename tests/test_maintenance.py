@@ -1,8 +1,8 @@
 import unittest
 from pathlib import Path
 
-from skillhub.maintenance import audit_skill
-from skillhub.registry import Skill
+from skillweft.maintenance import audit_skill
+from skillweft.registry import Skill
 
 
 class MaintenanceTest(unittest.TestCase):

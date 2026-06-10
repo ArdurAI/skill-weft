@@ -1,10 +1,10 @@
-# SkillHub Vision
+# SkillWeft Vision
 
-SkillHub is a one-stop skill operating system for AI tools.
+SkillWeft is a one-stop skill operating system for AI tools.
 
 ## Core idea
 
-Instead of manually loading skills into every AI tool, SkillHub acts as a shared context router:
+Instead of manually loading skills into every AI tool, SkillWeft acts as a shared context router:
 
 - One canonical skill registry.
 - Tool adapters for Codex, Claude, Gemini, Kimi, Grok, Cursor, Hermes, and others.

@@ -1,10 +1,10 @@
-# Hybrid SkillHub Architecture Implementation Plan
+# Hybrid SkillWeft Architecture Implementation Plan
 
 > **For Hermes:** Use subagent-driven-development skill to implement this plan task-by-task.
 
-**Goal:** Build SkillHub as a hybrid skill-management layer with (1) preflight routing before an AI agent starts, (2) a runtime MCP server that agents can query during work, and (3) tool-specific adapters for Claude Code, Codex, Gemini, Cursor, Hermes, and future agents.
+**Goal:** Build SkillWeft as a hybrid skill-management layer with (1) preflight routing before an AI agent starts, (2) a runtime MCP server that agents can query during work, and (3) tool-specific adapters for Claude Code, Codex, Gemini, Cursor, Hermes, and future agents.
 
-**Architecture:** SkillHub remains the canonical registry and router. Adapters never duplicate the whole skill library into each tool; they either inject a compact preflight context pack or configure an MCP server exposing a small router API. The registry, feedback, audit, and usage history stay local-first and tool-agnostic.
+**Architecture:** SkillWeft remains the canonical registry and router. Adapters never duplicate the whole skill library into each tool; they either inject a compact preflight context pack or configure an MCP server exposing a small router API. The registry, feedback, audit, and usage history stay local-first and tool-agnostic.
 
 **Tech Stack:** Python 3.10+, Markdown skill files, SQLite for feedback/usage, optional `mcp` Python package for MCP server mode, CLI wrappers for agent tools, JSON config generators for tool integrations.
 
@@ -12,7 +12,7 @@
 
 ## Verified integration facts on this machine
 
-Checked on 2026-06-09 under `/Users/gnutakki16/skillhub`:
+Checked on 2026-06-09 under `/Users/gnutakki16/skillweft`:
 
 | Tool | Status | Verified integration surfaces |
 |---|---|---|
@@ -28,25 +28,25 @@ Important Gemini note: `@google/gemini-cli` installed under `~/.hermes/node`, an
 
 ## Product shape
 
-SkillHub should expose three layers:
+SkillWeft should expose three layers:
 
 ### 1. Preflight router
 
-Before launching an agent, SkillHub receives the user task, selects relevant skills, packs the minimum useful context, and launches the target tool.
+Before launching an agent, SkillWeft receives the user task, selects relevant skills, packs the minimum useful context, and launches the target tool.
 
 Example future commands:
 
 ```bash
-skillhub suggest "fix failing pytest auth tests"
-skillhub pack "fix failing pytest auth tests" --target claude --budget 6000
-skillhub run claude "fix failing pytest auth tests"
-skillhub run codex "fix failing pytest auth tests"
-skillhub run gemini "fix failing pytest auth tests"
+skillweft suggest "fix failing pytest auth tests"
+skillweft pack "fix failing pytest auth tests" --target claude --budget 6000
+skillweft run claude "fix failing pytest auth tests"
+skillweft run codex "fix failing pytest auth tests"
+skillweft run gemini "fix failing pytest auth tests"
 ```
 
 ### 2. Runtime MCP server
 
-During a task, capable agents can call SkillHub dynamically.
+During a task, capable agents can call SkillWeft dynamically.
 
 MCP tools should be few and generic:
 
@@ -62,7 +62,7 @@ Do not expose each skill as its own tool. That would bloat tool schemas and recr
 
 ### 3. Tool-specific adapters
 
-Adapters translate SkillHub context into each tool's native integration surface:
+Adapters translate SkillWeft context into each tool's native integration surface:
 
 - Claude Code: `--append-system-prompt-file`, MCP config, `.claude/skills` export if wanted.
 - Codex: prompt/stdin wrapper around `codex exec`, optional project instruction file later.
@@ -74,13 +74,13 @@ Adapters translate SkillHub context into each tool's native integration surface:
 
 ## Design principles
 
-1. **Canonical registry:** Skills live once in SkillHub.
+1. **Canonical registry:** Skills live once in SkillWeft.
 2. **Small runtime API:** MCP exposes router operations, not hundreds of skill tools.
 3. **Preflight first:** Wrapper-based preflight routing works even if the target model never calls MCP.
 4. **Runtime optional:** MCP improves flexibility for tools that support it.
 5. **Context budget aware:** Context packs must support token/character budgets.
 6. **Explainable routing:** Every selected skill includes a reason.
-7. **Human-approved maintenance:** SkillHub can suggest updates, but canonical skill edits should be reviewable.
+7. **Human-approved maintenance:** SkillWeft can suggest updates, but canonical skill edits should be reviewable.
 8. **Safe provenance:** Track source, owner, trust level, and last modified time for each skill.
 9. **No secret leakage:** Skills and feedback logs must not store credentials.
 10. **Tool-agnostic core:** Adapters depend on core; core never depends on a specific AI tool.
@@ -90,7 +90,7 @@ Adapters translate SkillHub context into each tool's native integration surface:
 ## Proposed repository layout
 
 ```text
-src/skillhub/
+src/skillweft/
   __init__.py
   cli.py
   models.py
@@ -144,9 +144,9 @@ examples/
 **Objective:** Centralize typed objects shared by registry, router, packer, MCP, and adapters.
 
 **Files:**
-- Create: `src/skillhub/models.py`
-- Modify: `src/skillhub/registry.py`
-- Modify: `src/skillhub/router.py`
+- Create: `src/skillweft/models.py`
+- Modify: `src/skillweft/registry.py`
+- Modify: `src/skillweft/router.py`
 - Test: `tests/test_models.py`
 
 **Implementation sketch:**
@@ -214,7 +214,7 @@ Expected: model construction and serialization tests pass.
 **Objective:** Give each skill a stable ID and richer metadata while preserving simple Markdown compatibility.
 
 **Files:**
-- Modify: `src/skillhub/registry.py`
+- Modify: `src/skillweft/registry.py`
 - Test: `tests/test_registry.py`
 
 **Requirements:**
@@ -237,8 +237,8 @@ PYTHONPATH=src python3 -m unittest tests.test_registry -v
 **Objective:** Separate indexing from retrieval so keyword and embedding retrieval can coexist later.
 
 **Files:**
-- Create: `src/skillhub/retrieval.py`
-- Modify: `src/skillhub/router.py`
+- Create: `src/skillweft/retrieval.py`
+- Modify: `src/skillweft/router.py`
 - Test: `tests/test_router.py`
 
 **MVP implementation:**
@@ -272,8 +272,8 @@ PYTHONPATH=src python3 -m unittest tests.test_router -v
 **Objective:** Pack only the most useful context for the target tool.
 
 **Files:**
-- Create: `src/skillhub/token_budget.py`
-- Modify: `src/skillhub/packer.py`
+- Create: `src/skillweft/token_budget.py`
+- Modify: `src/skillweft/packer.py`
 - Test: `tests/test_packer.py`
 
 **Rules:**
@@ -292,15 +292,15 @@ PYTHONPATH=src python3 -m unittest tests.test_router -v
 **CLI examples:**
 
 ```bash
-skillhub pack "debug pytest" --target claude --budget 6000
-skillhub pack "debug pytest" --target codex --budget 4000 --format json
+skillweft pack "debug pytest" --target claude --budget 6000
+skillweft pack "debug pytest" --target codex --budget 4000 --format json
 ```
 
 **Verification:**
 
 ```bash
 PYTHONPATH=src python3 -m unittest tests.test_packer -v
-PYTHONPATH=src python3 -m skillhub.cli pack "debug pytest" --registry examples/skills --budget 1000
+PYTHONPATH=src python3 -m skillweft.cli pack "debug pytest" --registry examples/skills --budget 1000
 ```
 
 ---
@@ -312,8 +312,8 @@ PYTHONPATH=src python3 -m skillhub.cli pack "debug pytest" --registry examples/s
 **Objective:** Define a common interface for launching or configuring AI tools.
 
 **Files:**
-- Create: `src/skillhub/adapters/__init__.py`
-- Create: `src/skillhub/adapters/base.py`
+- Create: `src/skillweft/adapters/__init__.py`
+- Create: `src/skillweft/adapters/base.py`
 - Test: `tests/test_adapters_base.py`
 
 **Interface sketch:**
@@ -349,8 +349,8 @@ class AgentAdapter(Protocol):
 **Objective:** Support Claude Code with both preflight context injection and MCP config generation.
 
 **Files:**
-- Create: `src/skillhub/adapters/claude.py`
-- Create: `src/skillhub/integrations/claude_mcp_config.py`
+- Create: `src/skillweft/adapters/claude.py`
+- Create: `src/skillweft/integrations/claude_mcp_config.py`
 - Test: `tests/test_adapters_claude.py`
 
 **Verified surfaces:**
@@ -364,8 +364,8 @@ class AgentAdapter(Protocol):
 
 ```bash
 claude -p "<task>" \
-  --append-system-prompt-file /tmp/skillhub-context.md \
-  --mcp-config /tmp/skillhub-mcp.json \
+  --append-system-prompt-file /tmp/skillweft-context.md \
+  --mcp-config /tmp/skillweft-mcp.json \
   --max-turns 10
 ```
 
@@ -374,9 +374,9 @@ claude -p "<task>" \
 ```json
 {
   "mcpServers": {
-    "skillhub": {
+    "skillweft": {
       "command": "python3",
-      "args": ["-m", "skillhub.mcp_server", "stdio"]
+      "args": ["-m", "skillweft.mcp_server", "stdio"]
     }
   }
 }
@@ -386,7 +386,7 @@ claude -p "<task>" \
 
 ```bash
 PYTHONPATH=src python3 -m unittest tests.test_adapters_claude -v
-skillhub doctor --target claude
+skillweft doctor --target claude
 ```
 
 Expected: adapter reports Claude installed and shows supported surfaces.
@@ -398,7 +398,7 @@ Expected: adapter reports Claude installed and shows supported surfaces.
 **Objective:** Support Codex preflight routing through prompt/stdin injection.
 
 **Files:**
-- Create: `src/skillhub/adapters/codex.py`
+- Create: `src/skillweft/adapters/codex.py`
 - Test: `tests/test_adapters_codex.py`
 
 **Verified surfaces:**
@@ -412,17 +412,17 @@ Expected: adapter reports Claude installed and shows supported surfaces.
 **Preflight command shape:**
 
 ```bash
-printf '%s' "<SkillHub context pack>\n\nUser task: <task>" | \
+printf '%s' "<SkillWeft context pack>\n\nUser task: <task>" | \
   codex exec - --cd /path/to/project --sandbox workspace-write
 ```
 
-**Important:** For Codex, SkillHub does not need native Codex plugin support. A wrapper is enough for v1.
+**Important:** For Codex, SkillWeft does not need native Codex plugin support. A wrapper is enough for v1.
 
 **Verification:**
 
 ```bash
 PYTHONPATH=src python3 -m unittest tests.test_adapters_codex -v
-skillhub doctor --target codex
+skillweft doctor --target codex
 ```
 
 ---
@@ -432,8 +432,8 @@ skillhub doctor --target codex
 **Objective:** Support Gemini CLI with preflight and runtime MCP.
 
 **Files:**
-- Create: `src/skillhub/adapters/gemini.py`
-- Create: `src/skillhub/integrations/gemini_mcp_config.py`
+- Create: `src/skillweft/adapters/gemini.py`
+- Create: `src/skillweft/integrations/gemini_mcp_config.py`
 - Test: `tests/test_adapters_gemini.py`
 
 **Verified surfaces:**
@@ -447,20 +447,20 @@ skillhub doctor --target codex
 **Preflight command shape:**
 
 ```bash
-gemini -p "<SkillHub context pack>\n\nUser task: <task>" --output-format json
+gemini -p "<SkillWeft context pack>\n\nUser task: <task>" --output-format json
 ```
 
 **Runtime MCP mode:**
 
 ```bash
-gemini -p "<task>" --allowed-mcp-server-names skillhub
+gemini -p "<task>" --allowed-mcp-server-names skillweft
 ```
 
 **Verification:**
 
 ```bash
 PYTHONPATH=src python3 -m unittest tests.test_adapters_gemini -v
-skillhub doctor --target gemini
+skillweft doctor --target gemini
 ```
 
 ---
@@ -470,7 +470,7 @@ skillhub doctor --target gemini
 **Objective:** Support Hermes as both a target agent and an MCP-capable host.
 
 **Files:**
-- Create: `src/skillhub/adapters/hermes.py`
+- Create: `src/skillweft/adapters/hermes.py`
 - Test: `tests/test_adapters_hermes.py`
 
 **Verified surfaces:**
@@ -483,22 +483,22 @@ skillhub doctor --target gemini
 **Preflight command shape:**
 
 ```bash
-hermes chat -q "<SkillHub context pack>\n\nUser task: <task>"
+hermes chat -q "<SkillWeft context pack>\n\nUser task: <task>"
 ```
 
 **Future native mode:**
 
-SkillHub can generate temporary Hermes skill files and launch:
+SkillWeft can generate temporary Hermes skill files and launch:
 
 ```bash
-hermes -s generated-skillhub-pack chat -q "<task>"
+hermes -s generated-skillweft-pack chat -q "<task>"
 ```
 
 **Verification:**
 
 ```bash
 PYTHONPATH=src python3 -m unittest tests.test_adapters_hermes -v
-skillhub doctor --target hermes
+skillweft doctor --target hermes
 ```
 
 ---
@@ -508,8 +508,8 @@ skillhub doctor --target hermes
 **Objective:** Generate Cursor-compatible project context even before CLI automation is verified.
 
 **Files:**
-- Create: `src/skillhub/adapters/cursor.py`
-- Create: `src/skillhub/integrations/cursor_rules.py`
+- Create: `src/skillweft/adapters/cursor.py`
+- Create: `src/skillweft/integrations/cursor_rules.py`
 - Test: `tests/test_adapters_cursor.py`
 
 **MVP output:**
@@ -517,13 +517,13 @@ skillhub doctor --target hermes
 Generate a project-local rules file:
 
 ```text
-.cursor/rules/skillhub.generated.md
+.cursor/rules/skillweft.generated.md
 ```
 
 Content:
 
 ```markdown
-# SkillHub Context
+# SkillWeft Context
 
 This file is generated. Do not edit manually.
 
@@ -534,7 +534,7 @@ This file is generated. Do not edit manually.
 
 ```bash
 PYTHONPATH=src python3 -m unittest tests.test_adapters_cursor -v
-skillhub export cursor "debug pytest" --output .cursor/rules/skillhub.generated.md
+skillweft export cursor "debug pytest" --output .cursor/rules/skillweft.generated.md
 ```
 
 **Note:** Cursor CLI/runtime MCP details must be verified separately once Cursor is installed.
@@ -549,7 +549,7 @@ skillhub export cursor "debug pytest" --output .cursor/rules/skillhub.generated.
 
 **Files:**
 - Modify: `pyproject.toml`
-- Create: `src/skillhub/mcp_server.py`
+- Create: `src/skillweft/mcp_server.py`
 - Test: `tests/test_mcp_contract.py`
 
 **Dependency plan:**
@@ -563,17 +563,17 @@ mcp = ["mcp>=1.0"]
 
 ```bash
 python3 -m pip install -e '.[mcp]'
-PYTHONPATH=src python3 -m skillhub.mcp_server --help
+PYTHONPATH=src python3 -m skillweft.mcp_server --help
 ```
 
 ---
 
 ### Task 12: Implement MCP tool contract
 
-**Objective:** Expose SkillHub through a stable MCP API.
+**Objective:** Expose SkillWeft through a stable MCP API.
 
 **Files:**
-- Modify: `src/skillhub/mcp_server.py`
+- Modify: `src/skillweft/mcp_server.py`
 - Test: `tests/test_mcp_contract.py`
 
 **Tools:**
@@ -599,8 +599,8 @@ PYTHONPATH=src python3 -m unittest tests.test_mcp_contract -v
 Later integration test with Claude/Gemini/Hermes MCP host:
 
 ```bash
-skillhub mcp serve --stdio
-claude mcp add skillhub -- python3 -m skillhub.mcp_server stdio
+skillweft mcp serve --stdio
+claude mcp add skillweft -- python3 -m skillweft.mcp_server stdio
 ```
 
 ---
@@ -612,8 +612,8 @@ claude mcp add skillhub -- python3 -m skillhub.mcp_server stdio
 **Objective:** Track usage and outcomes without polluting skill files.
 
 **Files:**
-- Create: `src/skillhub/storage.py`
-- Create: `src/skillhub/feedback.py`
+- Create: `src/skillweft/storage.py`
+- Create: `src/skillweft/feedback.py`
 - Test: `tests/test_feedback.py`
 
 **Tables:**
@@ -638,7 +638,7 @@ PYTHONPATH=src python3 -m unittest tests.test_feedback -v
 **Objective:** Make skill maintenance useful and safe.
 
 **Files:**
-- Modify: `src/skillhub/maintenance.py`
+- Modify: `src/skillweft/maintenance.py`
 - Test: `tests/test_maintenance.py`
 
 **Checks:**
@@ -658,29 +658,29 @@ PYTHONPATH=src python3 -m unittest tests.test_feedback -v
 
 ```bash
 PYTHONPATH=src python3 -m unittest tests.test_maintenance -v
-skillhub audit --registry examples/skills
+skillweft audit --registry examples/skills
 ```
 
 ---
 
 ### Task 15: Add human-review update workflow
 
-**Objective:** Let SkillHub suggest skill updates without silently editing canonical skills.
+**Objective:** Let SkillWeft suggest skill updates without silently editing canonical skills.
 
 **Files:**
-- Create: `src/skillhub/review_queue.py`
-- Modify: `src/skillhub/cli.py`
+- Create: `src/skillweft/review_queue.py`
+- Modify: `src/skillweft/cli.py`
 - Test: `tests/test_review_queue.py`
 
 **Commands:**
 
 ```bash
-skillhub feedback python-debugging --outcome failure --notes "Did not mention pytest -k"
-skillhub audit
-skillhub review list
-skillhub review show <id>
-skillhub review apply <id>
-skillhub review reject <id>
+skillweft feedback python-debugging --outcome failure --notes "Did not mention pytest -k"
+skillweft audit
+skillweft review list
+skillweft review show <id>
+skillweft review apply <id>
+skillweft review reject <id>
 ```
 
 **Rule:** `review apply` may edit skill files; audit/feedback commands must not.
@@ -694,34 +694,34 @@ skillhub review reject <id>
 **Objective:** Make the three architecture layers usable from terminal.
 
 **Files:**
-- Modify: `src/skillhub/cli.py`
+- Modify: `src/skillweft/cli.py`
 - Test: `tests/test_cli.py`
 
 **Commands:**
 
 ```bash
-skillhub add <skill.md> --registry .skillhub/skills
-skillhub list --registry .skillhub/skills
-skillhub suggest "task" --registry .skillhub/skills
-skillhub pack "task" --target claude --budget 6000
-skillhub run claude "task" --dry-run
-skillhub run codex "task" --dry-run
-skillhub run gemini "task" --dry-run
-skillhub mcp serve --stdio
-skillhub integrate claude --scope user
-skillhub integrate gemini --scope user
-skillhub export cursor "task" --output .cursor/rules/skillhub.generated.md
-skillhub feedback <skill> --outcome success --notes "..."
-skillhub audit
-skillhub doctor
+skillweft add <skill.md> --registry .skillweft/skills
+skillweft list --registry .skillweft/skills
+skillweft suggest "task" --registry .skillweft/skills
+skillweft pack "task" --target claude --budget 6000
+skillweft run claude "task" --dry-run
+skillweft run codex "task" --dry-run
+skillweft run gemini "task" --dry-run
+skillweft mcp serve --stdio
+skillweft integrate claude --scope user
+skillweft integrate gemini --scope user
+skillweft export cursor "task" --output .cursor/rules/skillweft.generated.md
+skillweft feedback <skill> --outcome success --notes "..."
+skillweft audit
+skillweft doctor
 ```
 
 **Verification:**
 
 ```bash
 PYTHONPATH=src python3 -m unittest tests.test_cli -v
-PYTHONPATH=src python3 -m skillhub.cli doctor
-PYTHONPATH=src python3 -m skillhub.cli run claude "debug pytest" --dry-run
+PYTHONPATH=src python3 -m skillweft.cli doctor
+PYTHONPATH=src python3 -m skillweft.cli run claude "debug pytest" --dry-run
 ```
 
 ---
@@ -733,8 +733,8 @@ PYTHONPATH=src python3 -m skillhub.cli run claude "debug pytest" --dry-run
 **Objective:** Prevent untrusted skills from silently controlling external agents.
 
 **Files:**
-- Create: `src/skillhub/security.py`
-- Modify: `src/skillhub/packer.py`
+- Create: `src/skillweft/security.py`
+- Modify: `src/skillweft/packer.py`
 - Test: `tests/test_security.py`
 
 **Rules:**
@@ -790,18 +790,18 @@ Target: 2-4 days.
 Deliverables:
 - stable skill models
 - budget-aware packer
-- `skillhub run claude --dry-run`
-- `skillhub run codex --dry-run`
-- `skillhub run gemini --dry-run`
-- `skillhub doctor`
+- `skillweft run claude --dry-run`
+- `skillweft run codex --dry-run`
+- `skillweft run gemini --dry-run`
+- `skillweft doctor`
 
 Definition of done:
 
 ```bash
 PYTHONPATH=src python3 -m unittest discover -s tests
-skillhub run claude "debug pytest" --dry-run
-skillhub run codex "debug pytest" --dry-run
-skillhub run gemini "debug pytest" --dry-run
+skillweft run claude "debug pytest" --dry-run
+skillweft run codex "debug pytest" --dry-run
+skillweft run gemini "debug pytest" --dry-run
 ```
 
 ### Milestone 2: MCP server works locally
@@ -809,7 +809,7 @@ skillhub run gemini "debug pytest" --dry-run
 Target: 3-7 days.
 
 Deliverables:
-- `skillhub mcp serve --stdio`
+- `skillweft mcp serve --stdio`
 - MCP contract tests
 - Claude/Gemini/Hermes config generators
 - runtime tools: suggest/get/pack/report/audit
@@ -817,9 +817,9 @@ Deliverables:
 Definition of done:
 
 ```bash
-skillhub mcp serve --help
-skillhub integrate claude --dry-run
-skillhub integrate gemini --dry-run
+skillweft mcp serve --help
+skillweft integrate claude --dry-run
+skillweft integrate gemini --dry-run
 ```
 
 ### Milestone 3: Feedback and maintenance
@@ -835,9 +835,9 @@ Deliverables:
 Definition of done:
 
 ```bash
-skillhub feedback python-debugging --outcome success --notes "worked"
-skillhub audit
-skillhub review list
+skillweft feedback python-debugging --outcome success --notes "worked"
+skillweft audit
+skillweft review list
 ```
 
 ### Milestone 4: One-stop-shop UX
@@ -859,7 +859,7 @@ Deliverables:
 2. Budget-aware packer.
 3. Adapter abstraction.
 4. Claude/Codex/Gemini dry-run adapters.
-5. `skillhub doctor`.
+5. `skillweft doctor`.
 6. MCP server contract.
 7. Claude/Gemini/Hermes MCP config generators.
 8. Feedback SQLite store.
@@ -882,15 +882,15 @@ Deliverables:
 
 ## Success criteria
 
-SkillHub is successful when this workflow works reliably:
+SkillWeft is successful when this workflow works reliably:
 
 ```bash
-skillhub run claude "add tests for the auth middleware"
-skillhub run codex "fix the failing pytest auth test"
-skillhub run gemini "review this design doc for missing edge cases"
+skillweft run claude "add tests for the auth middleware"
+skillweft run codex "fix the failing pytest auth test"
+skillweft run gemini "review this design doc for missing edge cases"
 ```
 
-For each command, SkillHub should:
+For each command, SkillWeft should:
 
 1. select relevant skills,
 2. explain why they were selected,

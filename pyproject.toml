@@ -1,12 +1,13 @@
 [project]
-name = "skillhub"
+name = "skill-weft"
 version = "0.1.0"
 description = "Portable skill registry and context router for AI coding/agent tools"
 requires-python = ">=3.10"
 dependencies = []
 
 [project.scripts]
-skillhub = "skillhub.cli:main"
+skillweft = "skillweft.cli:main"
+skillhub = "skillweft.cli:main"
 
 [tool.pytest.ini_options]
 pythonpath = ["src"]

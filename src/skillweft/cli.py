@@ -49,29 +49,29 @@ def cmd_audit(args: argparse.Namespace) -> int:
 
 
 def build_parser() -> argparse.ArgumentParser:
-    parser = argparse.ArgumentParser(prog="skillhub")
+    parser = argparse.ArgumentParser(prog="skillweft")
     sub = parser.add_subparsers(required=True)
 
     add = sub.add_parser("add", help="copy a Markdown skill into the registry")
     add.add_argument("skill_file")
-    add.add_argument("--registry", default=".skillhub/skills")
+    add.add_argument("--registry", default=".skillweft/skills")
     add.set_defaults(func=cmd_add)
 
     suggest_cmd = sub.add_parser("suggest", help="suggest relevant skills for a task")
     suggest_cmd.add_argument("task")
-    suggest_cmd.add_argument("--registry", default=".skillhub/skills")
+    suggest_cmd.add_argument("--registry", default=".skillweft/skills")
     suggest_cmd.add_argument("--limit", type=int, default=5)
     suggest_cmd.set_defaults(func=cmd_suggest)
 
     pack = sub.add_parser("pack", help="emit a context pack for selected skills")
     pack.add_argument("task")
-    pack.add_argument("--registry", default=".skillhub/skills")
+    pack.add_argument("--registry", default=".skillweft/skills")
     pack.add_argument("--max-skills", type=int, default=3)
     pack.add_argument("--format", choices=["text", "json"], default="text")
     pack.set_defaults(func=cmd_pack)
 
     audit_cmd = sub.add_parser("audit", help="audit skills for maintenance issues")
-    audit_cmd.add_argument("--registry", default=".skillhub/skills")
+    audit_cmd.add_argument("--registry", default=".skillweft/skills")
     audit_cmd.set_defaults(func=cmd_audit)
     return parser
 

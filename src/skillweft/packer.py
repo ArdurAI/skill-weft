@@ -5,7 +5,7 @@ from .router import Suggestion
 
 
 def pack_text(task: str, suggestions: list[Suggestion]) -> str:
-    blocks = [f"# SkillHub Context Pack\n\nTask: {task}\n"]
+    blocks = [f"# SkillWeft Context Pack\n\nTask: {task}\n"]
     for item in suggestions:
         skill = item.skill
         blocks.append(

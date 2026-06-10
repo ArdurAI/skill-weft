@@ -1,4 +1,4 @@
-# SkillHub MVP Implementation Plan
+# SkillWeft MVP Implementation Plan
 
 > **For Hermes:** Use subagent-driven-development skill to implement this plan task-by-task.
 
@@ -16,18 +16,18 @@
 
 **Files:**
 - Create: `pyproject.toml`
-- Create: `src/skillhub/__init__.py`
-- Create: `src/skillhub/cli.py`
+- Create: `src/skillweft/__init__.py`
+- Create: `src/skillweft/cli.py`
 - Create: `tests/test_router.py`
 
-**Verification:** Run `python -m skillhub.cli --help` with `PYTHONPATH=src`.
+**Verification:** Run `python -m skillweft.cli --help` with `PYTHONPATH=src`.
 
 ## Task 2: Implement skill parsing
 
 **Objective:** Load Markdown files into Skill objects with name, description, tags, and content.
 
 **Files:**
-- Create: `src/skillhub/registry.py`
+- Create: `src/skillweft/registry.py`
 - Test: `tests/test_registry.py`
 
 **Verification:** Run `PYTHONPATH=src python -m unittest discover -s tests`.
@@ -37,7 +37,7 @@
 **Objective:** Suggest skills for a natural-language task and provide reasons.
 
 **Files:**
-- Create: `src/skillhub/router.py`
+- Create: `src/skillweft/router.py`
 - Test: `tests/test_router.py`
 
 **Verification:** Run unit tests and a CLI suggest command.
@@ -47,20 +47,20 @@
 **Objective:** Emit a compact skill context block in text or JSON.
 
 **Files:**
-- Create: `src/skillhub/packer.py`
+- Create: `src/skillweft/packer.py`
 - Test: `tests/test_packer.py`
 
-**Verification:** Run `python -m skillhub.cli pack "debug pytest" --registry examples/skills`.
+**Verification:** Run `python -m skillweft.cli pack "debug pytest" --registry examples/skills`.
 
 ## Task 5: Implement maintenance checks
 
 **Objective:** Flag skills that need metadata, examples, verification steps, or refresh.
 
 **Files:**
-- Create: `src/skillhub/maintenance.py`
+- Create: `src/skillweft/maintenance.py`
 - Test: `tests/test_maintenance.py`
 
-**Verification:** Run `python -m skillhub.cli audit --registry examples/skills`.
+**Verification:** Run `python -m skillweft.cli audit --registry examples/skills`.
 
 ## Task 6: Add docs and example skill
 

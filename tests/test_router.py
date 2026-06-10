@@ -1,8 +1,8 @@
 import unittest
 from pathlib import Path
 
-from skillhub.registry import Skill
-from skillhub.router import suggest
+from skillweft.registry import Skill
+from skillweft.router import suggest
 
 
 class RouterTest(unittest.TestCase):

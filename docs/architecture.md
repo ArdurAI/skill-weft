@@ -1,4 +1,4 @@
-# SkillHub Architecture
+# SkillWeft Architecture
 
 ## Components
 

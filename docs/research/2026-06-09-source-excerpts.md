@@ -1,4 +1,4 @@
-# Source excerpts for SkillHub integration research
+# Source excerpts for SkillWeft integration research
 
 Date: 2026-06-09
 

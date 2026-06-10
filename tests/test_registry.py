@@ -2,7 +2,7 @@ import tempfile
 from pathlib import Path
 import unittest
 
-from skillhub.registry import load_skill
+from skillweft.registry import load_skill
 
 
 class RegistryTest(unittest.TestCase):

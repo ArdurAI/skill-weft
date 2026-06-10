@@ -1,6 +1,6 @@
-# SkillHub
+# SkillWeft
 
-SkillHub is a portable skill-management layer for AI tools. It keeps skills in one place, indexes them, suggests the right skill for a task, and emits compact context packs that Codex, Claude, Gemini, Kimi, Grok, Cursor, Hermes, and other agents can consume without loading every skill all the time.
+SkillWeft is a portable skill-management layer for AI tools. It keeps skills in one place, indexes them, suggests the right skill for a task, and emits compact context packs that Codex, Claude, Gemini, Kimi, Grok, Cursor, Hermes, and other agents can consume without loading every skill all the time.
 
 ## Problem
 
@@ -19,9 +19,9 @@ Build a local-first CLI/service that:
 ## Quick start
 
 ```bash
-python -m skillhub.cli add examples/skills/python-debugging.md --registry .skillhub/skills
-python -m skillhub.cli suggest "debug a failing pytest test" --registry .skillhub/skills
-python -m skillhub.cli pack "debug a failing pytest test" --registry .skillhub/skills --max-skills 2
+python -m skillweft.cli add examples/skills/python-debugging.md --registry .skillweft/skills
+python -m skillweft.cli suggest "debug a failing pytest test" --registry .skillweft/skills
+python -m skillweft.cli pack "debug a failing pytest test" --registry .skillweft/skills --max-skills 2
 ```
 
 ## Current status
