@@ -35,6 +35,14 @@ class AdapterTest(unittest.TestCase):
         self.assertEqual(status.name, "cursor")
         self.assertIn("available", status.as_dict())
 
+    def test_gemini_adapter_uses_stdin_to_avoid_giant_shell_arguments(self):
+        adapter = get_adapter("gemini")
+        plan = adapter.build_launch_plan("debug pytest", "# SkillWeft Context Pack")
+
+        self.assertEqual(plan.command, ("gemini", "-p", "debug pytest", "--output-format", "json"))
+        self.assertIn("# SkillWeft Context Pack", plan.stdin or "")
+        self.assertLess(len(" ".join(plan.command)), 120)
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -3,7 +3,7 @@ from __future__ import annotations
 from pathlib import Path
 
 from ..models import LaunchPlan
-from .base import BaseAdapter, task_with_context
+from .base import BaseAdapter
 
 
 class GeminiAdapter(BaseAdapter):
@@ -12,8 +12,8 @@ class GeminiAdapter(BaseAdapter):
     install_hint = "Install Gemini CLI with: npm install -g @google/gemini-cli"
 
     def build_launch_plan(self, task: str, context_pack: str, workdir: Path | None = None, **kwargs: object) -> LaunchPlan:
-        prompt = task_with_context(task, context_pack)
         return LaunchPlan(
-            command=("gemini", "-p", prompt, "--output-format", "json"),
-            notes=("Gemini headless mode accepts -p/--prompt",),
+            command=("gemini", "-p", task, "--output-format", "json"),
+            stdin=context_pack,
+            notes=("Gemini headless mode accepts -p/--prompt and appends stdin, keeping large context out of shell arguments",),
         )

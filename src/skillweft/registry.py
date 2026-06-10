@@ -56,5 +56,25 @@ def iter_skills(registry: str | Path) -> Iterable[Skill]:
     root = Path(registry)
     if not root.exists():
         return []
-    paths = sorted(root.rglob("*.md"))
+
+    def is_hidden_descendant(path: Path) -> bool:
+        try:
+            rel = path.relative_to(root)
+        except ValueError:
+            rel = path
+        return any(part.startswith(".") for part in rel.parts)
+
+    all_paths = [
+        p
+        for p in sorted(root.rglob("*.md"))
+        if not is_hidden_descendant(p) and p.name != "DESCRIPTION.md"
+    ]
+    package_dirs = {p.parent for p in all_paths if p.name == "SKILL.md"}
+
+    def is_inside_package_support_file(path: Path) -> bool:
+        if path.name == "SKILL.md":
+            return False
+        return any(package_dir in path.parents for package_dir in package_dirs)
+
+    paths = [p for p in all_paths if not is_inside_package_support_file(p)]
     return [load_skill(p) for p in paths]

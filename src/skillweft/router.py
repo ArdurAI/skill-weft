@@ -5,7 +5,8 @@ from .models import Skill, Suggestion
 
 STOPWORDS = {
     "a", "an", "and", "are", "as", "for", "in", "is", "it", "of", "on", "or", "the", "to", "with",
-    "i", "want", "need", "do", "this", "that", "tool", "ai", "agent"
+    "i", "want", "need", "do", "this", "that", "tool", "tools", "ai", "agent",
+    "cli", "code", "server", "configure", "configuration", "local", "public", "create", "push"
 }
 
 
@@ -13,7 +14,7 @@ def tokenize(text: str) -> set[str]:
     return {t for t in re.findall(r"[a-z0-9][a-z0-9_-]+", text.lower()) if t not in STOPWORDS}
 
 
-def suggest(task: str, skills: list[Skill], limit: int = 5) -> list[Suggestion]:
+def suggest(task: str, skills: list[Skill], limit: int = 5, min_score: int = 2) -> list[Suggestion]:
     task_terms = tokenize(task)
     out: list[Suggestion] = []
     for skill in skills:
@@ -41,7 +42,7 @@ def suggest(task: str, skills: list[Skill], limit: int = 5) -> list[Suggestion]:
         if content_hits:
             score += len(content_hits)
             reasons.append("content matched: " + ", ".join(sorted(list(content_hits))[:8]))
-        if score > 0:
+        if score >= min_score:
             matched_terms = tuple(sorted(name_hits | desc_hits | tag_hits | content_hits))
             out.append(Suggestion(skill=skill, score=score, reasons=tuple(reasons), matched_terms=matched_terms))
     return sorted(out, key=lambda s: (-s.score, s.skill.name))[:limit]
